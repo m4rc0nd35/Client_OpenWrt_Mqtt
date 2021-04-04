@@ -1,7 +1,9 @@
 g++ main.cpp \
 -I ./libs/ \
--I ./headers/ \
-./Telemetry.cpp \
+-I ./src/ \
+./src/PubSubClient.cpp \
+./src/Countdown.cpp \
+./src/Telemetry.cpp \
 ./libs/MQTTPacket.c \
 ./libs/MQTTDeserializePublish.c \
 ./libs/MQTTConnectClient.c \

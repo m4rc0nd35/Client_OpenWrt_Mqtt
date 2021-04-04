@@ -33,7 +33,7 @@
 #define MQTTCLIENT_QOS1 1
 #endif
 #if !defined(MQTTCLIENT_QOS2)
-#define MQTTCLIENT_QOS2 0
+	#define MQTTCLIENT_QOS2 0
 #endif
 
 namespace MQTT
