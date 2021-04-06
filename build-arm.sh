@@ -12,4 +12,4 @@ export STAGING_DIR=./ && \
 ./libs/MQTTSerializePublish.c \
 ./libs/MQTTUnsubscribeClient.c \
 -o telemetry && \
-scp telemetry root@192.168.1.13:/root/
+scp telemetry root@192.168.1.2:/root/

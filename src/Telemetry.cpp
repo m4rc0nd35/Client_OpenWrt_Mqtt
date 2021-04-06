@@ -16,12 +16,10 @@ vector<string> Telemetry::split(string s, string delimiter)
 	res.push_back(s.substr(pos_start));
 	return res;
 }
-
 string Telemetry::serial_number()
 {
 	return exec("cat /proc/device-tree/serial-number");
 }
-
 string Telemetry::exec(string command)
 {
 	char buffer[128];
@@ -43,10 +41,10 @@ string Telemetry::exec(string command)
 string Telemetry::wifi()
 {
 	string data;
-	data.append(exec("uci get wireless.default_radio0.ssid"));
-	data.append(exec("uci get wireless.default_radio0.mode"));
-	data.append(exec("uci get wireless.default_radio0.encryption"));
-	data.append(exec("iwinfo wlan0 assoclist | grep -i 'dBm / unknown' | awk '{print $1,$2}' | tr '\n' '|' | sed 's/ /;/g'"));
+	data.append(exec("uci get wireless.default_radio0.ssid | awk '{print $1,$2}' | tr '\n' '|' | sed 's/ //g'"));
+	data.append(exec("uci get wireless.default_radio0.mode | awk '{print $1,$2}' | tr '\n' '|' | sed 's/ //g'"));
+	data.append(exec("uci get wireless.default_radio0.encryption | awk '{print $1,$2}' | tr '\n' '|' | sed 's/ //g'"));
+	data.append(exec("iwinfo wlan0 assoclist | grep -i 'dBm / unknown' | awk '{print $1,$2}' | tr '\n' ';' | sed 's/ /#/g'"));
 	return data;
 }
 string Telemetry::mac()
