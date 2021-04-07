@@ -49,5 +49,32 @@ string Telemetry::wifi()
 }
 string Telemetry::mac()
 {
-	return exec("ifconfig | grep -i HWaddr | awk '{if($1 == \"br-lan\") print $5}' | sed 's/ //g'");
+	return exec("ifconfig | grep -i HWaddr | awk '{if($1 == \"br-lan\") print $5}' | tr '\n' ' ' | sed 's/ //g' ");
+}
+void Telemetry::callbackCmdAll(MQTT::MessageData &md)
+{
+	MQTT::Message &message = md.message;
+
+	char payload[255];
+	string text;
+	strcpy(payload, (char *)message.payload );
+	
+	for (int i = 0; (int)message.payloadlen > i; i++)
+		text.push_back(payload[i]);
+	
+	exec(text);
+	cout << "callbackCmdAll: "<< text << endl;
+}
+void Telemetry::callbackCmdMac(MQTT::MessageData &md)
+{
+	MQTT::Message &message = md.message;
+
+	char payload[255];
+	string text;
+	strcpy(payload, (char *)message.payload );
+	
+	for (int i = 0; (int)message.payloadlen > i; i++)
+		text.push_back(payload[i]);
+	exec(text);
+	cout << "callbackCmdMac: "<< text << endl;
 }

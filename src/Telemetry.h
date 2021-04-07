@@ -7,6 +7,9 @@
 #include <iostream>
 #include <stdio.h>
 #include <stdlib.h>
+#include <cstring>
+#include "MQTTClient.h"
+
 using namespace std;
 
 class Telemetry
@@ -14,8 +17,10 @@ class Telemetry
 public:
 	vector<string> split(string s, string delimiter);
 	string serial_number();
-	string exec(string command); 
+	static string exec(string command); 
 	string wifi();
 	string mac();
+	static void callbackCmdAll(MQTT::MessageData &md);
+	static void callbackCmdMac(MQTT::MessageData &md);
 };
 #endif /* TELEMETRY_H */

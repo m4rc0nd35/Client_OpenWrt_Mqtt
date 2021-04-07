@@ -12,19 +12,6 @@
 
 using namespace std;
 
-void callbackMsg(MQTT::MessageData &md)
-{
-	MQTT::Message &message = md.message;
-
-	char payload[255];
-	string text;
-	strcpy(payload, (char *)message.payload );
-	
-	for (int i = 0; (int)message.payloadlen > i; i++)
-		text.push_back(payload[i]);
-	cout << "Text: "<< text << endl;
-}
-
 int main(int argc, char *argv[])
 {
 	while (true)
@@ -34,12 +21,12 @@ int main(int argc, char *argv[])
 			bool connected = true;
 			/* code */
 			Telemetry *tele = new Telemetry();
-			cout << tele->mac() << endl;
-			cout << tele->wifi() << endl;
-
+			string mac = tele->mac().c_str();
 			PubSubClient connSocket = PubSubClient();
-			const char *topic = "/open/cmd";
-			const char *topic_pub = "/open/telemetry";
+			char *topic_cmd;
+			const char *topic_cmd_all = "/all/cmd";
+			const char *topic_pub = "/telemetry";
+			sprintf(topic_cmd, "/%s/cmd", (char*)mac.c_str());
 			// vector<string> lista = tele->split("adsf;qwret;nvfkbdsj;orthdfjgh;dfjrleih", ";");
 			// for (auto i : lista)
 			// 	cout << i << endl;
@@ -48,7 +35,7 @@ int main(int argc, char *argv[])
 
 			const char *hostname = "mqtt.vejame.com.br";
 			int port = 1883;
-			printf("Connecting to %s:%d\n", hostname, port);
+			printf("Connecting to %s:%d...\n", hostname, port);
 			int rc = connSocket.connect(hostname, port);
 			if (rc != 0)
 				connected = false;
@@ -57,18 +44,22 @@ int main(int argc, char *argv[])
 			{
 				MQTTPacket_connectData data = MQTTPacket_connectData_initializer;
 				data.MQTTVersion = 3;
-				data.clientID.cstring = (char *)"OpenWrt";
-				data.username.cstring = (char *)"openwrt";
-				data.password.cstring = (char *)"321654";
-				printf("MQTT connecting\n");
+				data.clientID.cstring = (char *)mac.c_str();
+				data.username.cstring = (char *)"radios";
+				data.password.cstring = (char *)"projecttrampolimdavitoria";
+				printf("MQTT connecting %s...\n", mac.c_str());
 				rc = client.connect(data);
 				if (rc != 0)
 					connected = false;
 				else
 				{
-					printf("MQTT connected\n");
+					printf("MQTT connected!\n");
 
-					rc = client.subscribe(topic, MQTT::QOS0, callbackMsg);
+					rc = client.subscribe(topic_cmd, MQTT::QOS0, Telemetry::callbackCmdMac);
+					if (rc != 0)
+						connected = false;
+						
+					rc = client.subscribe(topic_cmd_all, MQTT::QOS0, Telemetry::callbackCmdAll);
 					if (rc != 0)
 						connected = false;
 
@@ -88,10 +79,10 @@ int main(int argc, char *argv[])
 						if (rc != 0)
 							connected = false;
 
-						client.yield(5000);
+						client.yield(30000);
 					}
 
-					rc = client.unsubscribe(topic);
+					rc = client.unsubscribe(topic_cmd);
 					if (rc != 0)
 						printf("rc from unsubscribe was %d\n", rc);
 				}
@@ -99,10 +90,10 @@ int main(int argc, char *argv[])
 
 			connSocket.disconnect();
 		}
-		catch (const std::exception &e)
-		{
+		catch (const std::exception &e){
 			std::cerr << e.what() << '\n';
 		}
+		
 		usleep(5 * 1000000);
 	}
 	return 0;
