@@ -1,4 +1,4 @@
-#include <PubSubClient.h>
+#include "PubSubClient.h"
 
 PubSubClient::PubSubClient(){}
 int PubSubClient::connect(const char *hostname, int port)
@@ -42,7 +42,6 @@ int PubSubClient::connect(const char *hostname, int port)
 		mysock = socket(family, type, 0);
 		if (mysock != -1)
 		{
-			int opt = 1;
 			rc = ::connect(mysock, (struct sockaddr *)&address, sizeof(address));
 		}
 	}

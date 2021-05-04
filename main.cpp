@@ -1,9 +1,9 @@
 #define MQTTCLIENT_QOS2 1
 #include <memory.h>
 #include "MQTTClient.h"
-#include <Countdown.h>
-#include <PubSubClient.h>
-#include <Telemetry.h>
+#include "Countdown.h"
+#include "PubSubClient.h"
+#include "Telemetry.h"
 #include <iostream>
 #include <stdio.h>
 #include <stdlib.h>
@@ -23,9 +23,9 @@ int main(int argc, char *argv[])
 			Telemetry *tele = new Telemetry();
 			string mac = tele->mac().c_str();
 			PubSubClient connSocket = PubSubClient();
-			char *topic_cmd;
-			const char *topic_cmd_all = "/all/cmd";
-			const char *topic_pub = "/telemetry";
+			char topic_cmd[20];
+			const char topic_cmd_all[] = "/commands/all";
+			const char topic_pub[] = "/telemetry";
 			sprintf(topic_cmd, "/%s/cmd", (char*)mac.c_str());
 			// vector<string> lista = tele->split("adsf;qwret;nvfkbdsj;orthdfjgh;dfjrleih", ";");
 			// for (auto i : lista)
